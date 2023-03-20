@@ -1,14 +1,12 @@
 import React from "react";
-import { Grid, Container } from "@mui/material";
-import ProjectSelection from "./componentes/proyectos";
+import ProjectSelection from "./componentes/sellos_calidad";
 
 const App = () => {
-
-  return <Grid container spacing={2} component="main">
-    <Container>
-        <ProjectSelection />
-    </Container>
-  </Grid>;
+  return (
+    <div>
+      <ProjectSelection />
+    </div>
+  );
 };
 
 export default App;

@@ -73,26 +73,30 @@ app.get("/contratistas", (req, res) => {
   });
 });
 
-app.get("/unidades-disponibles/:id_proyecto/:id_etapa/:id_sello/:id_contratista", (req, res) => {
-  const { id_proyecto,  id_etapa, id_sello, id_contratista} = req.params;
-  const query = `SELECT * FROM unidadestomasello WHERE 
+app.get(
+  "/unidades-disponibles/:id_proyecto/:id_etapa/:id_sello/:id_contratista",
+  (req, res) => {
+    const { id_proyecto, id_etapa, id_sello, id_contratista } = req.params;
+    const query = `SELECT * FROM unidadestomasello WHERE 
                           id_proyecto = ${id_proyecto} AND 
                           id_etapa = ${id_etapa} AND 
                           id_sello = ${id_sello} AND 
                           id_contratista = ${id_contratista} AND 
                           seleccionada = 0`;
-  connection.query(query, (err, results) => {
-    if (err) {
-      console.error("Error al obtener las unidades disponibles: ", err);
-      res.status(500).send("Error al obtener las unidades disponibles");
-      return;
-    }
-    res.json(results);
-  });
-});
+    connection.query(query, (err, results) => {
+      if (err) {
+        console.error("Error al obtener las unidades disponibles: ", err);
+        res.status(500).send("Error al obtener las unidades disponibles");
+        return;
+      }
+      res.json(results);
+    });
+  }
+);
 
 app.post("/tomas-sello", (req, res) => {
-  const { id_unidad, id_proyecto, id_etapa, id_sello, id_contratista } = req.body;
+  const { id_unidad, id_proyecto, id_etapa, id_sello, id_contratista } =
+    req.body;
   //actuaizar unidades seleccionadas
   const query = `UPDATE unidadestomasello SET seleccionada = 1 WHERE 
                           id_unidad = ${id_unidad} AND 
