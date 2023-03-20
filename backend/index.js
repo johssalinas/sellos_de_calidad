@@ -38,7 +38,7 @@ app.get("/proyectos", (req, res) => {
 
 app.get("/proyectos/:id/agrupaciones", (req, res) => {
   const { id } = req.params;
-  const query = `SELECT * FROM EtapaProyecto WHERE id_proyecto = ${id}`;
+  const query = `SELECT * FROM etapaproyecto WHERE id_proyecto = ${id}`;
   connection.query(query, (err, results) => {
     if (err) {
       console.error("Error al obtener las agrupaciones: ", err);
@@ -50,7 +50,7 @@ app.get("/proyectos/:id/agrupaciones", (req, res) => {
 });
 
 app.get("/sellos-calidad", (req, res) => {
-  const query = "SELECT * FROM SelloCalidad";
+  const query = "SELECT * FROM sellocalidad";
   connection.query(query, (err, results) => {
     if (err) {
       console.error("Error al obtener los sellos de calidad: ", err);
@@ -62,7 +62,7 @@ app.get("/sellos-calidad", (req, res) => {
 });
 
 app.get("/contratistas", (req, res) => {
-  const query = "SELECT * FROM Contratista";
+  const query = "SELECT * FROM contratista";
   connection.query(query, (err, results) => {
     if (err) {
       console.error("Error al obtener los contratistas: ", err);
@@ -73,10 +73,14 @@ app.get("/contratistas", (req, res) => {
   });
 });
 
-app.get("/unidades-disponibles", (req, res) => {
-  const query = `SELECT DISTINCT u.* FROM UnidadesTomaSello u
-                   LEFT JOIN TomaSello t ON u.id = t.id_unidad
-                   WHERE t.id_unidad IS NULL`;
+app.get("/unidades-disponibles/:id_proyecto/:id_etapa/:id_sello/:id_contratista", (req, res) => {
+  const { id_proyecto,  id_etapa, id_sello, id_contratista} = req.params;
+  const query = `SELECT * FROM unidadestomasello WHERE 
+                          id_proyecto = ${id_proyecto} AND 
+                          id_etapa = ${id_etapa} AND 
+                          id_sello = ${id_sello} AND 
+                          id_contratista = ${id_contratista} AND 
+                          seleccionada = 0`;
   connection.query(query, (err, results) => {
     if (err) {
       console.error("Error al obtener las unidades disponibles: ", err);
@@ -88,9 +92,14 @@ app.get("/unidades-disponibles", (req, res) => {
 });
 
 app.post("/tomas-sello", (req, res) => {
-  const { id_unidad, id_sello, id_contratista } = req.body;
-  const query = `INSERT INTO TomaSello (id_unidad, id_sello, id_contratista)
-                   VALUES (${id_unidad}, ${id_sello}, ${id_contratista})`;
+  const { id_unidad, id_proyecto, id_etapa, id_sello, id_contratista } = req.body;
+  //actuaizar unidades seleccionadas
+  const query = `UPDATE unidadestomasello SET seleccionada = 1 WHERE 
+                          id_unidad = ${id_unidad} AND 
+                          id_proyecto = ${id_proyecto} AND
+                          id_etapa = ${id_etapa} AND 
+                          id_sello = ${id_sello} AND 
+                          id_contratista = ${id_contratista}`;
   connection.query(query, (err, results) => {
     if (err) {
       console.log(err);
